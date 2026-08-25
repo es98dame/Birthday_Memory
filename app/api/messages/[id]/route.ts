@@ -1,0 +1,119 @@
+import { NextResponse } from "next/server";
+import { getPool } from "@/app/lib/db";
+import type { ResultSetHeader, RowDataPacket } from "mysql2";
+
+const MAX_NAME = 20;
+const MAX_CONTENT = 200;
+
+interface MessageRow extends RowDataPacket {
+  id: number;
+  author_name: string;
+  content: string;
+  edit_token: string;
+  created_at: Date;
+}
+
+function toClient(row: MessageRow) {
+  return {
+    id: row.id,
+    name: row.author_name,
+    body: row.content,
+    at: new Date(row.created_at).toISOString(),
+    editToken: row.edit_token,
+  };
+}
+
+type Params = { params: { id: string } };
+
+export async function PATCH(request: Request, { params }: Params) {
+  try {
+    const id = Number(params.id);
+    if (!Number.isInteger(id) || id <= 0) {
+      return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+    }
+
+    const body = await request.json();
+    const name = String(body.name ?? "").trim();
+    const content = String(body.content ?? "").trim();
+    const editToken = String(body.editToken ?? "");
+
+    if (!editToken) {
+      return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 });
+    }
+    if (!name || !content) {
+      return NextResponse.json(
+        { error: "이름과 메시지를 입력해주세요." },
+        { status: 400 }
+      );
+    }
+    if (name.length > MAX_NAME || content.length > MAX_CONTENT) {
+      return NextResponse.json({ error: "글자 수를 확인해주세요." }, { status: 400 });
+    }
+
+    const pool = getPool();
+    const [result] = await pool.execute<ResultSetHeader>(
+      `UPDATE birthday_messages
+       SET author_name = ?, content = ?
+       WHERE id = ? AND edit_token = ?`,
+      [name, content, id, editToken]
+    );
+
+    if (result.affectedRows === 0) {
+      return NextResponse.json(
+        { error: "메시지를 찾을 수 없거나 권한이 없습니다." },
+        { status: 404 }
+      );
+    }
+
+    const [rows] = await pool.execute<MessageRow[]>(
+      `SELECT id, author_name, content, edit_token, created_at
+       FROM birthday_messages WHERE id = ?`,
+      [id]
+    );
+
+    return NextResponse.json(toClient(rows[0]));
+  } catch (error) {
+    console.error("PATCH /api/messages/[id]", error);
+    return NextResponse.json(
+      { error: "메시지 수정에 실패했습니다." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: Request, { params }: Params) {
+  try {
+    const id = Number(params.id);
+    if (!Number.isInteger(id) || id <= 0) {
+      return NextResponse.json({ error: "잘못된 요청입니다." }, { status: 400 });
+    }
+
+    const body = await request.json().catch(() => ({}));
+    const editToken = String(body.editToken ?? "");
+
+    if (!editToken) {
+      return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 });
+    }
+
+    const pool = getPool();
+    const [result] = await pool.execute<ResultSetHeader>(
+      `DELETE FROM birthday_messages WHERE id = ? AND edit_token = ?`,
+      [id, editToken]
+    );
+
+    if (result.affectedRows === 0) {
+      return NextResponse.json(
+        { error: "메시지를 찾을 수 없거나 권한이 없습니다." },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("DELETE /api/messages/[id]", error);
+    return NextResponse.json(
+      { error: "메시지 삭제에 실패했습니다." },
+      { status: 500 }
+    );
+  }
+}
