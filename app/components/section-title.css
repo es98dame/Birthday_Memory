@@ -1,7 +1,7 @@
 mark {
-  --lightness: 85%;
+  --lightness: 88%;
   --highlighted: 1;
-  --highlight: hsl(var(--hue, 15) 80% var(--lightness));
+  --highlight: hsl(var(--hue, 18) 75% var(--lightness));
   background: transparent;
 }
 
@@ -17,7 +17,7 @@ mark {
 mark h2 {
   background: linear-gradient(
       120deg,
-      var(--highlight, lightblue) 50%,
+      var(--highlight, #ffe4d4) 50%,
       transparent 50%
     )
     110% 0 / 200% 100% no-repeat;

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { gowunBatang } from "./style/fonts/gowunBatang";
+import { parisienne } from "./style/fonts/parisienne";
 import "./global.css";
 
 export default function RootLayout({
@@ -8,15 +9,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={gowunBatang.className}>
+    <html lang="ko" className={`${gowunBatang.className} ${parisienne.variable}`}>
       <body>{children}</body>
     </html>
   );
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const title = "정미량, 박범영 결혼합니다";
-  const description = "24년 3월 30일 11시 30분, 포항 UA컨벤션 5층 메리골드홀";
+  const title = "루나 & 루미의 첫번째 생일";
+  const description = "루나 & 루미의 첫번째 생일을 축하해주세요. 2026.09.02";
   const images = "https://r2.wedding.beomyeong.miryang.dev/_BKK6901-2.jpg";
   return {
     title,
@@ -35,9 +36,9 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     other: {
       ["twitter:label1"]: "날짜",
-      ["twitter:data1"]: "2024.03.30 11:30",
-      ["twitter:label2"]: "장소",
-      ["twitter:data2"]: "포항 UA컨벤션 5층 메리골드홀",
+      ["twitter:data1"]: "2026.09.02",
+      ["twitter:label2"]: "이벤트",
+      ["twitter:data2"]: "첫번째 생일 파티",
     },
   };
 }

@@ -9,8 +9,10 @@ import {
   blockTitle,
   container,
   description,
+  title,
+  titleAccent,
+  titleWrap,
 } from "./accounts.css";
-import SectionTitle from "./section-title";
 import { ArrowDownIcon } from "./svgs";
 
 const mAccounts: Account[] = [
@@ -51,16 +53,18 @@ const bAccounts: Account[] = [
 
 export default function Accounts() {
   return (
-    <section className={container}>
-      <SectionTitle title="마음 전하실 곳" />
+    <section className={container} id="accounts">
+      <div className={titleWrap}>
+        <h2 className={title}>마음 전하실 곳</h2>
+        <span className={titleAccent} />
+      </div>
       <p className={description}>
         <span>참석이 어려우신 분들을 위해 계좌번호를 기재하였습니다.</span>
-        <span> 너그러운 마음으로 양해 부탁드리며,</span>
-        <span>축의금을 보내주신 분들께 감사의 뜻을 전하고 싶습니다.</span>
-        <span>연락주시면 감사하겠습니다.</span>
+        <span>너그러운 마음으로 양해 부탁드리며,</span>
+        <span>보내주신 마음 감사히 받겠습니다.</span>
       </p>
-      <Block accounts={mAccounts} who="신부" />
-      <Block accounts={bAccounts} who="신랑" />
+      <Block accounts={mAccounts} who="엄마" />
+      <Block accounts={bAccounts} who="아빠" />
     </section>
   );
 }
@@ -78,7 +82,7 @@ function Block({ accounts, who }: { accounts: Account[]; who: string }) {
     setOpen(!open);
   };
 
-  const onClickAccount = ({ bank, number, name }: Account) => {
+  const onClickAccount = ({ number }: Account) => {
     if (navigator?.clipboard) {
       navigator.clipboard.writeText(number).then(() => {
         alert("계좌번호가 복사되었습니다.");
@@ -97,7 +101,7 @@ function Block({ accounts, who }: { accounts: Account[]; who: string }) {
       {open && (
         <>
           {accounts.map((account) => (
-            <div key={account.number} className={blockRow}>
+            <div key={`${account.name}-${account.bank}`} className={blockRow}>
               <div className={blockContent}>
                 <span>{account.bank}</span>
                 <span>{account.number}</span>
