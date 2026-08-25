@@ -1,39 +1,28 @@
-import mysql from "mysql2/promise";
+import { createPool, type VercelPool } from "@vercel/postgres";
 
 const globalForDb = globalThis as unknown as {
-  mysqlPool?: mysql.Pool;
+  vercelPgPool?: VercelPool;
 };
 
-function createPool() {
-  const host = process.env.DB_HOST;
-  const user = process.env.DB_USER;
-  const password = process.env.DB_PASSWORD;
-  const database = process.env.DB_NAME;
+function getConnectionString() {
+  return (
+    process.env.STORAGE_POSTGRES_URL ||
+    process.env.POSTGRES_URL ||
+    process.env.DATABASE_URL
+  );
+}
 
-  if (!host || !user || !password || !database) {
+export function getDb() {
+  const connectionString = getConnectionString();
+  if (!connectionString) {
     throw new Error(
-      "DB env missing: set DB_HOST, DB_USER, DB_PASSWORD, DB_NAME"
+      "DB env missing: set STORAGE_POSTGRES_URL or POSTGRES_URL"
     );
   }
 
-  return mysql.createPool({
-    host,
-    port: Number(process.env.DB_PORT || 3306),
-    user,
-    password,
-    database,
-    waitForConnections: true,
-    connectionLimit: 5,
-    maxIdle: 5,
-    idleTimeout: 60000,
-    enableKeepAlive: true,
-    timezone: "+09:00",
-  });
-}
-
-export function getPool() {
-  if (!globalForDb.mysqlPool) {
-    globalForDb.mysqlPool = createPool();
+  if (!globalForDb.vercelPgPool) {
+    globalForDb.vercelPgPool = createPool({ connectionString });
   }
-  return globalForDb.mysqlPool;
+
+  return globalForDb.vercelPgPool;
 }

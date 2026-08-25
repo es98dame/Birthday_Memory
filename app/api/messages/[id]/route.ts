@@ -1,16 +1,15 @@
 import { NextResponse } from "next/server";
-import { getPool } from "@/app/lib/db";
-import type { ResultSetHeader, RowDataPacket } from "mysql2";
+import { getDb } from "@/app/lib/db";
 
 const MAX_NAME = 20;
 const MAX_CONTENT = 200;
 
-interface MessageRow extends RowDataPacket {
+interface MessageRow {
   id: number;
   author_name: string;
   content: string;
   edit_token: string;
-  created_at: Date;
+  created_at: string | Date;
 }
 
 function toClient(row: MessageRow) {
@@ -50,26 +49,22 @@ export async function PATCH(request: Request, { params }: Params) {
       return NextResponse.json({ error: "글자 수를 확인해주세요." }, { status: 400 });
     }
 
-    const pool = getPool();
-    const [result] = await pool.execute<ResultSetHeader>(
-      `UPDATE birthday_messages
-       SET author_name = ?, content = ?
-       WHERE id = ? AND edit_token = ?`,
-      [name, content, id, editToken]
-    );
+    const db = getDb();
+    const { rows } = await db.sql<MessageRow>`
+      UPDATE birthday_messages
+      SET author_name = ${name},
+          content = ${content},
+          updated_at = NOW()
+      WHERE id = ${id} AND edit_token = ${editToken}
+      RETURNING id, author_name, content, edit_token, created_at
+    `;
 
-    if (result.affectedRows === 0) {
+    if (rows.length === 0) {
       return NextResponse.json(
         { error: "메시지를 찾을 수 없거나 권한이 없습니다." },
         { status: 404 }
       );
     }
-
-    const [rows] = await pool.execute<MessageRow[]>(
-      `SELECT id, author_name, content, edit_token, created_at
-       FROM birthday_messages WHERE id = ?`,
-      [id]
-    );
 
     return NextResponse.json(toClient(rows[0]));
   } catch (error) {
@@ -95,13 +90,13 @@ export async function DELETE(request: Request, { params }: Params) {
       return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 });
     }
 
-    const pool = getPool();
-    const [result] = await pool.execute<ResultSetHeader>(
-      `DELETE FROM birthday_messages WHERE id = ? AND edit_token = ?`,
-      [id, editToken]
-    );
+    const db = getDb();
+    const { rowCount } = await db.sql`
+      DELETE FROM birthday_messages
+      WHERE id = ${id} AND edit_token = ${editToken}
+    `;
 
-    if (result.affectedRows === 0) {
+    if (!rowCount) {
       return NextResponse.json(
         { error: "메시지를 찾을 수 없거나 권한이 없습니다." },
         { status: 404 }
