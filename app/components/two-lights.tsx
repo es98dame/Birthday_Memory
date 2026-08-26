@@ -15,11 +15,10 @@ import {
   intro,
   koreanName,
   moonMark,
+  portraitLumi,
+  portraitLuna,
   scriptName,
   title,
-  verseLumi,
-  verseLuna,
-  verseRef,
 } from "./two-lights.css";
 
 function MoonIcon() {
@@ -110,16 +109,12 @@ export default function TwoLights() {
             <br />
             작은 달빛
           </p>
-          <blockquote className={verseLuna}>
-            하나님이 두 큰 광체를 만드사
-            <br />
-            큰 광체로 낮을 주관하게 하시고
-            <br />
-            작은 광체로 밤을 주관하게 하시며
-            <br />
-            또 별들을 만드시고
-            <span className={verseRef}>창세기 1:16</span>
-          </blockquote>
+          <img
+            className={portraitLuna}
+            src="/Luna.jpg"
+            alt="루나"
+            loading="lazy"
+          />
         </article>
 
         <article className={child}>
@@ -133,14 +128,12 @@ export default function TwoLights() {
             <br />
             밝음과 기쁨을 전하는
           </p>
-          <blockquote className={verseLumi}>
-            하나님이 이르시되
-            <br />
-            빛이 있으라 하시니
-            <br />
-            빛이 있었고
-            <span className={verseRef}>창세기 1:3</span>
-          </blockquote>
+          <img
+            className={portraitLumi}
+            src="/Lumi.jpg"
+            alt="루미"
+            loading="lazy"
+          />
         </article>
       </div>
 

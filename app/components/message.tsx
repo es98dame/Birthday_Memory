@@ -28,8 +28,10 @@ import {
   timestamp,
   wrap,
 } from "./message.css";
+import { charCount, clipChars, MAX_CONTENT_CHARS, MAX_NAME_CHARS } from "@/app/lib/text";
 
-const MAX_LENGTH = 200;
+const MAX_NAME = MAX_NAME_CHARS;
+const MAX_LENGTH = MAX_CONTENT_CHARS;
 
 interface SavedMessage {
   id: number;
@@ -182,8 +184,7 @@ export default function Message() {
           name="name"
           placeholder="이름을 입력해주세요"
           value={name}
-          onChange={(e) => setName(e.target.value)}
-          maxLength={20}
+          onChange={(e) => setName(clipChars(e.target.value, MAX_NAME))}
           required
         />
 
@@ -193,12 +194,11 @@ export default function Message() {
             name="message"
             placeholder="축하 메시지를 남겨주세요"
             value={body}
-            onChange={(e) => setBody(e.target.value.slice(0, MAX_LENGTH))}
-            maxLength={MAX_LENGTH}
+            onChange={(e) => setBody(clipChars(e.target.value, MAX_LENGTH))}
             required
           />
           <span className={counter}>
-            {body.length} / {MAX_LENGTH}
+            {charCount(body)} / {MAX_LENGTH}
           </span>
         </div>
 

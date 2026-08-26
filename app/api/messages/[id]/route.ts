@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/app/lib/db";
+import { charCount, sanitizeText, MAX_CONTENT_CHARS, MAX_NAME_CHARS } from "@/app/lib/text";
 
-const MAX_NAME = 20;
-const MAX_CONTENT = 200;
+const MAX_NAME = MAX_NAME_CHARS;
+const MAX_CONTENT = MAX_CONTENT_CHARS;
 
 interface MessageRow {
   id: number;
@@ -32,8 +33,8 @@ export async function PATCH(request: Request, { params }: Params) {
     }
 
     const body = await request.json();
-    const name = String(body.name ?? "").trim();
-    const content = String(body.content ?? "").trim();
+    const name = sanitizeText(String(body.name ?? "")).trim();
+    const content = sanitizeText(String(body.content ?? "")).trim();
     const editToken = String(body.editToken ?? "");
 
     if (!editToken) {
@@ -45,7 +46,7 @@ export async function PATCH(request: Request, { params }: Params) {
         { status: 400 }
       );
     }
-    if (name.length > MAX_NAME || content.length > MAX_CONTENT) {
+    if (charCount(name) > MAX_NAME || charCount(content) > MAX_CONTENT) {
       return NextResponse.json({ error: "글자 수를 확인해주세요." }, { status: 400 });
     }
 
