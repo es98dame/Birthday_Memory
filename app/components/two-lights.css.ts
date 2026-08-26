@@ -105,50 +105,41 @@ export const koreanName = style({
 });
 
 export const childDesc = style({
-  margin: "4px 0 8px",
+  margin: "4px 0 10px",
   fontSize: 12,
   lineHeight: 1.6,
   color: "#6b5f5a",
   wordBreak: "keep-all",
-  minHeight: 58,
+  minHeight: 40,
 });
 
-export const verse = style({
+export const portrait = style({
   width: "100%",
-  flex: 1,
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-  borderRadius: 12,
-  padding: "12px 10px",
-  fontSize: 11,
-  lineHeight: 1.6,
-  color: "#5a504c",
-  wordBreak: "keep-all",
+  aspectRatio: "1 / 1",
+  objectFit: "cover",
+  borderRadius: 14,
+  display: "block",
   margin: 0,
   boxSizing: "border-box",
+  border: "1px solid #f5d9ce",
+  boxShadow: "0 6px 18px rgba(120, 60, 40, 0.08)",
 });
 
-export const verseLuna = style([
-  verse,
+export const portraitLuna = style([
+  portrait,
   {
-    backgroundColor: "#f0ecf8",
+    borderColor: "#e0d6f0",
+    boxShadow: "0 6px 18px rgba(120, 100, 160, 0.1)",
   },
 ]);
 
-export const verseLumi = style([
-  verse,
+export const portraitLumi = style([
+  portrait,
   {
-    backgroundColor: "#fff0e8",
+    borderColor: "#f5d9ce",
+    boxShadow: "0 6px 18px rgba(242, 140, 102, 0.12)",
   },
 ]);
-
-export const verseRef = style({
-  display: "block",
-  marginTop: 6,
-  fontSize: 10,
-  color: "#9a8b84",
-});
 
 export const closing = style({
   margin: "28px 0 0",
