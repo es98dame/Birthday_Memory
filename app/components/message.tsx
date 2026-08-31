@@ -11,6 +11,8 @@ import {
   decoLeft,
   decoRight,
   deleteButton,
+  deleteConfirmButton,
+  deleteHint,
   editButton,
   empty,
   errorText,
@@ -66,6 +68,7 @@ export default function Message() {
   const [body, setBody] = useState("");
   const [messages, setMessages] = useState<SavedMessage[]>([]);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
 
@@ -125,6 +128,7 @@ export default function Message() {
 
   const onEdit = (message: SavedMessage) => {
     setEditingId(message.id);
+    setConfirmDeleteId(null);
     setName(message.name);
     setBody(message.body);
     setError("");
@@ -137,7 +141,10 @@ export default function Message() {
   };
 
   const onDelete = async (message: SavedMessage) => {
-    if (!confirm("이 메시지를 삭제할까요?")) return;
+    if (confirmDeleteId !== message.id) {
+      setConfirmDeleteId(message.id);
+      return;
+    }
 
     setPending(true);
     setError("");
@@ -151,6 +158,7 @@ export default function Message() {
       if (!res.ok) throw new Error(data.error || "삭제 실패");
 
       setMessages((prev) => prev.filter((m) => m.id !== message.id));
+      setConfirmDeleteId(null);
       if (editingId === message.id) onCancelEdit();
     } catch (err) {
       setError(err instanceof Error ? err.message : "오류가 발생했습니다.");
@@ -252,23 +260,49 @@ export default function Message() {
                   </time>
                 </div>
                 <p className={messageBody}>{message.body}</p>
+                {confirmDeleteId === message.id && (
+                  <p className={deleteHint}>정말 삭제할까요?</p>
+                )}
                 <div className={actions}>
-                  <button
-                    className={editButton}
-                    type="button"
-                    onClick={() => onEdit(message)}
-                    disabled={pending}
-                  >
-                    수정하기
-                  </button>
-                  <button
-                    className={deleteButton}
-                    type="button"
-                    onClick={() => onDelete(message)}
-                    disabled={pending}
-                  >
-                    삭제하기
-                  </button>
+                  {confirmDeleteId === message.id ? (
+                    <>
+                      <button
+                        className={editButton}
+                        type="button"
+                        onClick={() => setConfirmDeleteId(null)}
+                        disabled={pending}
+                      >
+                        취소
+                      </button>
+                      <button
+                        className={deleteConfirmButton}
+                        type="button"
+                        onClick={() => onDelete(message)}
+                        disabled={pending}
+                      >
+                        {pending ? "삭제 중..." : "정말 삭제"}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        className={editButton}
+                        type="button"
+                        onClick={() => onEdit(message)}
+                        disabled={pending}
+                      >
+                        수정하기
+                      </button>
+                      <button
+                        className={deleteButton}
+                        type="button"
+                        onClick={() => onDelete(message)}
+                        disabled={pending}
+                      >
+                        삭제하기
+                      </button>
+                    </>
+                  )}
                 </div>
               </article>
             )
