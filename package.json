@@ -1,5 +1,5 @@
 {
-  "name": "wedding-invitation",
+  "name": "birthday-memory",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,15 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@splinetool/react-spline": "^2.2.6",
-    "@splinetool/runtime": "^1.0.38",
     "@vercel/postgres": "^0.10.0",
     "next": "14.1.0",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "^1.8.5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
