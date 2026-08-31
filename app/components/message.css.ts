@@ -238,9 +238,28 @@ export const deleteButton = style({
   cursor: "pointer",
 });
 
+export const deleteConfirmButton = style({
+  border: "none",
+  borderRadius: 8,
+  backgroundColor: "#c06b66",
+  color: "#ffffff",
+  fontSize: 12,
+  padding: "6px 12px",
+  cursor: "pointer",
+});
+
+export const deleteHint = style({
+  margin: 0,
+  fontSize: 12,
+  color: "#c06b66",
+  textAlign: "right",
+});
+
 export const actions = style({
   display: "flex",
   justifyContent: "flex-end",
+  alignItems: "center",
+  flexWrap: "wrap",
   gap: 8,
   marginTop: 2,
 });
