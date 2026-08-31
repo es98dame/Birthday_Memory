@@ -1,6 +1,6 @@
-# 미량 범영 모바일 청첩장
+# 루나 & 루미의 첫번째 생일
 
-> [wedding.beomyeong.miryang.dev](https://wedding.beomyeong.miryang.dev)
+> [hbdlunalumi.damikim.site](https://hbdlunalumi.damikim.site)
 
 ```
 npm i
@@ -11,11 +11,5 @@ npm run dev
 
 - [Next.js 14](https://nextjs.org/)
 - [TypeScript](https://www.typescriptlang.org/ko/)
-- [Spline](https://spline.design/)
 - [vanilla-extract](https://vanilla-extract.style/)
-- [Cloudflare Pages](https://pages.cloudflare.com/)
-
----
-
-- refer
-  - [spline, plastic love](https://app.spline.design/community/file/872f7f26-f08e-433f-8d5e-5a208195f737)
+- [Vercel](https://vercel.com/) + [Vercel Postgres](https://vercel.com/storage/postgres)

@@ -18,8 +18,9 @@ export default function RootLayout({
 export async function generateMetadata(): Promise<Metadata> {
   const title = "루나 & 루미의 첫번째 생일";
   const description = "루나 & 루미의 첫번째 생일을 축하해주세요. 2026.09.02";
-  const images = "https://r2.wedding.beomyeong.miryang.dev/_BKK6901-2.jpg";
+  const images = "/LunaAndLumi.jpg";
   return {
+    metadataBase: new URL("https://hbdlunalumi.damikim.site"),
     title,
     description,
     openGraph: {
