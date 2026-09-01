@@ -27,26 +27,13 @@ interface Remaining {
   done: boolean;
 }
 
-function localTargetMs() {
-  return new Date(
-    TARGET.year,
-    TARGET.month - 1,
-    TARGET.day,
-    0,
-    0,
-    0,
-    0
-  ).getTime();
-}
-
-function daysInMonth(year: number, month: number) {
-  return new Date(year, month, 0).getDate();
+function localTarget() {
+  return new Date(TARGET.year, TARGET.month - 1, TARGET.day, 0, 0, 0, 0);
 }
 
 function getRemaining(now: Date): Remaining {
-  const targetMs = localTargetMs();
-  const diff = targetMs - now.getTime();
-  if (diff <= 0) {
+  const target = localTarget();
+  if (target.getTime() - now.getTime() <= 0) {
     return {
       years: 0,
       months: 0,
@@ -58,26 +45,34 @@ function getRemaining(now: Date): Remaining {
     };
   }
 
-  // Y/M/D from the visitor's local calendar date
-  let years = TARGET.year - now.getFullYear();
-  let months = TARGET.month - (now.getMonth() + 1);
-  let days = TARGET.day - now.getDate();
+  let years = target.getFullYear() - now.getFullYear();
+  let months = target.getMonth() - now.getMonth();
+  let days = target.getDate() - now.getDate();
+  let hours = target.getHours() - now.getHours();
+  let minutes = target.getMinutes() - now.getMinutes();
+  let seconds = target.getSeconds() - now.getSeconds();
 
+  if (seconds < 0) {
+    seconds += 60;
+    minutes -= 1;
+  }
+  if (minutes < 0) {
+    minutes += 60;
+    hours -= 1;
+  }
+  if (hours < 0) {
+    hours += 24;
+    days -= 1;
+  }
   if (days < 0) {
     months -= 1;
-    const prevMonth = TARGET.month === 1 ? 12 : TARGET.month - 1;
-    const prevYear = TARGET.month === 1 ? TARGET.year - 1 : TARGET.year;
-    days += daysInMonth(prevYear, prevMonth);
+    // Days in the month before the target month
+    days += new Date(target.getFullYear(), target.getMonth(), 0).getDate();
   }
   if (months < 0) {
     months += 12;
     years -= 1;
   }
-
-  const totalSeconds = Math.floor(diff / 1000);
-  const seconds = totalSeconds % 60;
-  const minutes = Math.floor(totalSeconds / 60) % 60;
-  const hours = Math.floor(totalSeconds / 3600) % 24;
 
   return { years, months, days, hours, minutes, seconds, done: false };
 }
