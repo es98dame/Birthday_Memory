@@ -16,6 +16,7 @@ const ko = {
   },
   hero: {
     invite: "루나 & 루미의 첫번째 생일을 축하해주세요",
+    date: "2026년 9월 2일",
   },
   twinsArt: {
     alt: "루나와 루미",
@@ -77,8 +78,10 @@ const ko = {
   countdown: {
     title: "성년까지",
     description: "루나와 루미가 18살이 되는 날까지",
+    basis: "기준: 접속 지역 시간 2043.09.02 00:00",
     done: "드디어 성년이 되었어요 🎉",
     years: "년",
+    months: "월",
     days: "일",
     hours: "시간",
     minutes: "분",
@@ -116,6 +119,7 @@ const en = {
 
   hero: {
     invite: "Celebrate Luna & Lumi’s First Birthday",
+    date: "September 2, 2026",
   },
 
   twinsArt: {
@@ -203,8 +207,10 @@ const en = {
   countdown: {
     title: "Until Adulthood",
     description: "Until the day Luna and Lumi turn 18",
+    basis: "Based on Sep 2, 2043, 12:00 AM in your timezone",
     done: "They’re all grown up 🎉",
     years: "Years",
+    months: "Months",
     days: "Days",
     hours: "Hours",
     minutes: "Minutes",

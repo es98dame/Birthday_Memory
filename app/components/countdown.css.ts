@@ -42,10 +42,10 @@ export const description = style({
 
 export const grid = style({
   display: "grid",
-  gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
+  gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
   gap: 8,
   width: "100%",
-  maxWidth: 520,
+  maxWidth: 420,
   marginTop: 8,
 });
 
