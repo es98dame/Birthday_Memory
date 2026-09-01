@@ -6,7 +6,7 @@ export default function TwinsArt() {
       <figure className={figure}>
         <img
           className={image}
-          src="/twins_drawing_withoutbg.png"
+          src="/LunaAndLumi.jpg"
           alt="루나와 루미"
         />
       </figure>
