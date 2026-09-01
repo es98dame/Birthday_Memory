@@ -100,7 +100,6 @@ export default function Countdown({ locale }: { locale: Locale }) {
         <span className={titleAccent} />
       </div>
       <p className={description}>{t.description}</p>
-      <p className={description}>{t.basis}</p>
 
       {remaining?.done ? (
         <p className={description}>{t.done}</p>
