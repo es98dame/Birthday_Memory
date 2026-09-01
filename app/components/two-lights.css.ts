@@ -110,7 +110,8 @@ export const childDesc = style({
   lineHeight: 1.6,
   color: "#6b5f5a",
   wordBreak: "keep-all",
-  minHeight: 40,
+  minHeight: "calc(1.6em * 3)",
+  flex: "1 0 auto",
 });
 
 export const portrait = style({
@@ -119,7 +120,8 @@ export const portrait = style({
   objectFit: "cover",
   borderRadius: 14,
   display: "block",
-  margin: 0,
+  margin: "auto 0 0",
+  flexShrink: 0,
   boxSizing: "border-box",
   border: "1px solid #f5d9ce",
   boxShadow: "0 6px 18px rgba(120, 60, 40, 0.08)",
