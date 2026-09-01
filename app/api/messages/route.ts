@@ -1,5 +1,6 @@
 import { randomBytes } from "crypto";
 import { NextResponse } from "next/server";
+import { apiError, resolveLocale } from "@/app/i18n/api";
 import { getDb } from "@/app/lib/db";
 import { charCount, sanitizeText, MAX_CONTENT_CHARS, MAX_NAME_CHARS } from "@/app/lib/text";
 
@@ -25,19 +26,18 @@ function toClient(row: MessageRow) {
 }
 
 export async function POST(request: Request) {
+  let locale = resolveLocale(undefined);
   try {
     const body = await request.json();
+    locale = resolveLocale(body.locale);
     const name = sanitizeText(String(body.name ?? "")).trim();
     const content = sanitizeText(String(body.content ?? "")).trim();
 
     if (!name || !content) {
-      return NextResponse.json(
-        { error: "이름과 메시지를 입력해주세요." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: apiError("required", locale) }, { status: 400 });
     }
     if (charCount(name) > MAX_NAME || charCount(content) > MAX_CONTENT) {
-      return NextResponse.json({ error: "글자 수를 확인해주세요." }, { status: 400 });
+      return NextResponse.json({ error: apiError("length", locale) }, { status: 400 });
     }
 
     const editToken = randomBytes(32).toString("hex");
@@ -51,9 +51,6 @@ export async function POST(request: Request) {
     return NextResponse.json(toClient(rows[0]), { status: 201 });
   } catch (error) {
     console.error("POST /api/messages", error);
-    return NextResponse.json(
-      { error: "메시지 저장에 실패했습니다." },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: apiError("saveFailed", locale) }, { status: 500 });
   }
 }

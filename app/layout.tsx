@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { gowunBatang } from "./style/fonts/gowunBatang";
 import { parisienne } from "./style/fonts/parisienne";
+import { getDictionary } from "./i18n/dictionary";
 import "./global.css";
 
 export default function RootLayout({
@@ -8,38 +10,20 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = headers().get("x-locale") === "en" ? "en" : "ko";
+
   return (
-    <html lang="ko" className={`${gowunBatang.className} ${parisienne.variable}`}>
+    <html lang={locale} className={`${gowunBatang.className} ${parisienne.variable}`}>
       <body>{children}</body>
     </html>
   );
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const title = "루나 & 루미의 첫번째 생일";
-  const description = "루나 & 루미의 첫번째 생일을 축하해주세요. 2026.09.02";
-  const images = "/LunaAndLumi.jpg";
+  const t = getDictionary("ko").meta;
   return {
     metadataBase: new URL("https://hbdlunalumi.damikim.site"),
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      images,
-      locale: "ko_KR",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images,
-    },
-    other: {
-      ["twitter:label1"]: "날짜",
-      ["twitter:data1"]: "2026.09.02",
-      ["twitter:label2"]: "이벤트",
-      ["twitter:data2"]: "첫번째 생일 파티",
-    },
+    title: t.title,
+    description: t.description,
   };
 }

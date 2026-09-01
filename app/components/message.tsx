@@ -1,6 +1,11 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import {
+  formatMessageDate,
+  getDictionary,
+  type Locale,
+} from "@/app/i18n/dictionary";
 import { FlowerArt } from "./svgs";
 import {
   actions,
@@ -43,18 +48,6 @@ interface SavedMessage {
   editToken: string;
 }
 
-function formatKoreanDate(iso: string) {
-  const date = new Date(iso);
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  const hours = date.getHours();
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  const period = hours < 12 ? "오전" : "오후";
-  const hour12 = hours % 12 || 12;
-  return `${year}년 ${month}월 ${day}일 ${period} ${hour12}:${minutes}`;
-}
-
 function PlaneIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
@@ -63,7 +56,8 @@ function PlaneIcon() {
   );
 }
 
-export default function Message() {
+export default function Message({ locale }: { locale: Locale }) {
+  const t = getDictionary(locale).message;
   const [name, setName] = useState("");
   const [body, setBody] = useState("");
   const [messages, setMessages] = useState<SavedMessage[]>([]);
@@ -93,10 +87,11 @@ export default function Message() {
             name: trimmedName,
             content: trimmedBody,
             editToken: current.editToken,
+            locale,
           }),
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "수정 실패");
+        if (!res.ok) throw new Error(data.error || t.errorUpdate);
 
         setMessages((prev) =>
           prev.map((m) => (m.id === editingId ? data : m))
@@ -109,10 +104,11 @@ export default function Message() {
           body: JSON.stringify({
             name: trimmedName,
             content: trimmedBody,
+            locale,
           }),
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "저장 실패");
+        if (!res.ok) throw new Error(data.error || t.errorSave);
 
         setMessages((prev) => [data, ...prev]);
       }
@@ -120,7 +116,7 @@ export default function Message() {
       setName("");
       setBody("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "오류가 발생했습니다.");
+      setError(err instanceof Error ? err.message : t.errorGeneric);
     } finally {
       setPending(false);
     }
@@ -152,16 +148,16 @@ export default function Message() {
       const res = await fetch(`/api/messages/${message.id}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ editToken: message.editToken }),
+        body: JSON.stringify({ editToken: message.editToken, locale }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "삭제 실패");
+      if (!res.ok) throw new Error(data.error || t.errorDelete);
 
       setMessages((prev) => prev.filter((m) => m.id !== message.id));
       setConfirmDeleteId(null);
       if (editingId === message.id) onCancelEdit();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "오류가 발생했습니다.");
+      setError(err instanceof Error ? err.message : t.errorGeneric);
     } finally {
       setPending(false);
     }
@@ -178,19 +174,19 @@ export default function Message() {
 
       <form className={card} onSubmit={onSubmit}>
         <h2 className={sectionTitle}>
-          {editingId != null ? "축하 메시지 수정하기 ❤️" : "생일 축하 메시지 남기기 ❤️"}
+          {editingId != null ? t.titleEdit : t.titleNew}
         </h2>
         <p className={capsule}>
-          남겨주신 메시지는 루나와 루미가 성년이 되는 날,
+          {t.capsule[0]}
           <br />
-          타임캡슐처럼 전해질 거예요.
+          {t.capsule[1]}
         </p>
 
         <input
           className={field}
           type="text"
           name="name"
-          placeholder="이름을 입력해주세요"
+          placeholder={t.namePlaceholder}
           value={name}
           onChange={(e) => setName(clipChars(e.target.value, MAX_NAME))}
           required
@@ -200,7 +196,7 @@ export default function Message() {
           <textarea
             className={textarea}
             name="message"
-            placeholder="축하 메시지를 남겨주세요"
+            placeholder={t.bodyPlaceholder}
             value={body}
             onChange={(e) => setBody(clipChars(e.target.value, MAX_LENGTH))}
             required
@@ -216,10 +212,10 @@ export default function Message() {
           disabled={pending || !name.trim() || !body.trim()}
         >
           {pending
-            ? "저장 중..."
+            ? t.submitting
             : editingId != null
-              ? "수정 완료"
-              : "메시지 보내기"}
+              ? t.submitEdit
+              : t.submitNew}
           {!pending && editingId == null && <PlaneIcon />}
         </button>
 
@@ -230,25 +226,25 @@ export default function Message() {
             onClick={onCancelEdit}
             style={{ alignSelf: "center" }}
           >
-            수정 취소
+            {t.cancelEdit}
           </button>
         )}
 
         {error && <p className={errorText}>{error}</p>}
 
         <p className={notice}>
-          ⚠️ 이 화면을 벗어나거나 새로고침하면 작성한 메시지를 다시 볼 수 없어요.
+          {t.notice[0]}
           <br />
-          다른 분에게는 보이지 않습니다.
+          {t.notice[1]}
         </p>
       </form>
 
       <div className={mySection}>
-        <h2 className={sectionTitle}>나의 축하 메시지 🧡</h2>
-        <p className={sectionHint}>이 방문에서 작성한 메시지만 확인할 수 있어요.</p>
+        <h2 className={sectionTitle}>{t.myTitle}</h2>
+        <p className={sectionHint}>{t.myHint}</p>
 
         {messages.length === 0 ? (
-          <p className={empty}>아직 남긴 메시지가 없어요.</p>
+          <p className={empty}>{t.empty}</p>
         ) : (
           messages.map((message) =>
             editingId === message.id ? null : (
@@ -256,12 +252,12 @@ export default function Message() {
                 <div className={messageMeta}>
                   <span className={author}>{message.name}</span>
                   <time className={timestamp} dateTime={message.at}>
-                    {formatKoreanDate(message.at)}
+                    {formatMessageDate(message.at, locale)}
                   </time>
                 </div>
                 <p className={messageBody}>{message.body}</p>
                 {confirmDeleteId === message.id && (
-                  <p className={deleteHint}>정말 삭제할까요?</p>
+                  <p className={deleteHint}>{t.deleteConfirm}</p>
                 )}
                 <div className={actions}>
                   {confirmDeleteId === message.id ? (
@@ -272,7 +268,7 @@ export default function Message() {
                         onClick={() => setConfirmDeleteId(null)}
                         disabled={pending}
                       >
-                        취소
+                        {t.cancel}
                       </button>
                       <button
                         className={deleteConfirmButton}
@@ -280,7 +276,7 @@ export default function Message() {
                         onClick={() => onDelete(message)}
                         disabled={pending}
                       >
-                        {pending ? "삭제 중..." : "정말 삭제"}
+                        {pending ? t.deleting : t.deleteSure}
                       </button>
                     </>
                   ) : (
@@ -291,7 +287,7 @@ export default function Message() {
                         onClick={() => onEdit(message)}
                         disabled={pending}
                       >
-                        수정하기
+                        {t.edit}
                       </button>
                       <button
                         className={deleteButton}
@@ -299,7 +295,7 @@ export default function Message() {
                         onClick={() => onDelete(message)}
                         disabled={pending}
                       >
-                        삭제하기
+                        {t.delete}
                       </button>
                     </>
                   )}

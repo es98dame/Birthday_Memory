@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getDictionary, type Locale } from "@/app/i18n/dictionary";
 import {
   container,
   description,
@@ -43,7 +44,8 @@ function getRemaining(now: Date): Remaining {
   return { years, days, hours, minutes, seconds, done: false };
 }
 
-export default function Countdown() {
+export default function Countdown({ locale }: { locale: Locale }) {
+  const t = getDictionary(locale).countdown;
   const [remaining, setRemaining] = useState<Remaining | null>(null);
 
   useEffect(() => {
@@ -56,22 +58,20 @@ export default function Countdown() {
   return (
     <section className={container} id="countdown">
       <div className={titleWrap}>
-        <h2 className={title}>성년까지</h2>
+        <h2 className={title}>{t.title}</h2>
         <span className={titleAccent} />
       </div>
-      <p className={description}>
-        루나와 루미가 18살이 되는 날까지
-      </p>
+      <p className={description}>{t.description}</p>
 
       {remaining?.done ? (
-        <p className={description}>드디어 성년이 되었어요 🎉</p>
+        <p className={description}>{t.done}</p>
       ) : (
         <div className={grid}>
-          <Unit value={remaining?.years} label="년" />
-          <Unit value={remaining?.days} label="일" />
-          <Unit value={remaining?.hours} label="시간" />
-          <Unit value={remaining?.minutes} label="분" />
-          <Unit value={remaining?.seconds} label="초" />
+          <Unit value={remaining?.years} label={t.years} />
+          <Unit value={remaining?.days} label={t.days} />
+          <Unit value={remaining?.hours} label={t.hours} />
+          <Unit value={remaining?.minutes} label={t.minutes} />
+          <Unit value={remaining?.seconds} label={t.seconds} />
         </div>
       )}
     </section>

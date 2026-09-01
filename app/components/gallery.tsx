@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type MouseEvent } from "react";
+import { getDictionary, type Locale } from "@/app/i18n/dictionary";
 import {
   closeButton,
   container,
@@ -21,7 +22,8 @@ import { images } from "./gallery-data";
 
 export { images };
 
-export default function Gallery() {
+export default function Gallery({ locale }: { locale: Locale }) {
+  const t = getDictionary(locale).gallery;
   const [index, setIndex] = useState<number | null>(null);
 
   useEffect(() => {
@@ -68,13 +70,11 @@ export default function Gallery() {
   return (
     <section className={container}>
       <div className={titleWrap}>
-        <h2 className={title}>사진첩</h2>
+        <h2 className={title}>{t.title}</h2>
         <span className={titleAccent} />
       </div>
 
-      <span className={description}>
-        루나 & 루미의 소중한 순간들을 함께 나눠보세요.
-      </span>
+      <span className={description}>{t.description}</span>
       <div className={imageContainer}>
         {images.map((img, i) => (
           <button
@@ -82,14 +82,9 @@ export default function Gallery() {
             type="button"
             className={imageButton}
             onClick={() => setIndex(i)}
-            aria-label="사진 크게 보기"
+            aria-label={t.enlarge}
           >
-            <img
-              className={image}
-              src={img}
-              alt="루나 & 루미"
-              loading="lazy"
-            />
+            <img className={image} src={img} alt={t.alt} loading="lazy" />
           </button>
         ))}
       </div>
@@ -99,14 +94,14 @@ export default function Gallery() {
           className={lightbox}
           role="dialog"
           aria-modal="true"
-          aria-label="확대된 사진"
+          aria-label={t.lightbox}
           onClick={() => setIndex(null)}
         >
           <button
             type="button"
             className={closeButton}
             onClick={() => setIndex(null)}
-            aria-label="닫기"
+            aria-label={t.close}
           >
             ×
           </button>
@@ -114,21 +109,21 @@ export default function Gallery() {
             type="button"
             className={`${navButton} ${navPrev}`}
             onClick={showPrev}
-            aria-label="이전 사진"
+            aria-label={t.prev}
           >
             ‹
           </button>
           <img
             className={lightboxImage}
             src={images[index]}
-            alt="루나 & 루미"
+            alt={t.alt}
             onClick={(event) => event.stopPropagation()}
           />
           <button
             type="button"
             className={`${navButton} ${navNext}`}
             onClick={showNext}
-            aria-label="다음 사진"
+            aria-label={t.next}
           >
             ›
           </button>
