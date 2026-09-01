@@ -1,16 +1,19 @@
+import { getDictionary, type Locale } from "@/app/i18n/dictionary";
 import { block, container, gift, meta } from "./footer.css";
 
-export default function Footer() {
+export default function Footer({ locale }: { locale: Locale }) {
+  const t = getDictionary(locale).footer;
+
   return (
     <footer className={container}>
       <div className={block}>
-        <span>루나 & 루미 첫번째 생일</span>
+        <span>{t.title}</span>
         <time className={meta} dateTime="2026-09-02">
           2026.09.02
         </time>
       </div>
       <a href="#top" className={gift}>
-        맨 위로 ↑
+        {t.top}
       </a>
     </footer>
   );

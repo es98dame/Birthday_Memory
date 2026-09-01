@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import HomePage from "./components/home-page";
-import { getDictionary } from "./i18n/dictionary";
+import HomePage from "../components/home-page";
+import { getDictionary } from "../i18n/dictionary";
 
-export default function Home() {
-  return <HomePage locale="ko" />;
+export default function EnglishHome() {
+  return <HomePage locale="en" />;
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = getDictionary("ko").meta;
+  const t = getDictionary("en").meta;
   const images = "/LunaAndLumi.jpg";
   return {
     title: t.title,
@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: t.title,
       description: t.description,
       images,
-      locale: "ko_KR",
+      locale: "en_US",
     },
     twitter: {
       card: "summary_large_image",

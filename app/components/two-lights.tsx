@@ -1,4 +1,5 @@
 import { FlowerArt } from "./svgs";
+import { getDictionary, type Locale } from "@/app/i18n/dictionary";
 import {
   child,
   childDesc,
@@ -73,7 +74,9 @@ function LeafHeart() {
   );
 }
 
-export default function TwoLights() {
+export default function TwoLights({ locale }: { locale: Locale }) {
+  const t = getDictionary(locale).twoLights;
+
   return (
     <section className={container}>
       <div className={decoLeft}>
@@ -87,12 +90,13 @@ export default function TwoLights() {
       </div>
 
       <CrescentMark />
-      <h2 className={title}>두 개의 빛</h2>
+      <h2 className={title}>{t.title}</h2>
       <p className={intro}>
-      하나님께서 빛을 만드시고
-      <br /> 낮과 밤을 밝힐 두 광명을 두셨듯이,
-      <br />  
-      우리에게도 서로 다른 빛을 지닌 두 아이가 왔습니다.<br />  
+        {t.intro[0]}
+        <br /> {t.intro[1]}
+        <br />
+        {t.intro[2]}
+        <br />
       </p>
 
       <div className={duo}>
@@ -105,14 +109,14 @@ export default function TwoLights() {
           <p className={scriptName}>Luna</p>
           <p className={koreanName}>루나</p>
           <p className={childDesc}>
-            밤을 조용히 비추는
+            {t.lunaDesc[0]}
             <br />
-            작은 달빛
+            {t.lunaDesc[1]}
           </p>
           <img
             className={portraitLuna}
             src="/Luna.jpg"
-            alt="루나"
+            alt={t.lunaAlt}
             loading="lazy"
           />
         </article>
@@ -124,23 +128,23 @@ export default function TwoLights() {
           <p className={scriptName}>Lumi</p>
           <p className={koreanName}>루미</p>
           <p className={childDesc}>
-            세상의 첫 빛처럼
+            {t.lumiDesc[0]}
             <br />
-            밝음과 기쁨을 전하는
+            {t.lumiDesc[1]}
           </p>
           <img
             className={portraitLumi}
             src="/Lumi.jpg"
-            alt="루미"
+            alt={t.lumiAlt}
             loading="lazy"
           />
         </article>
       </div>
 
       <p className={closing}>
-      달과 빛이 함께하듯,
-      <br />
-      두 아이가 서로의 빛이 되어 가기를 바랍니다.
+        {t.closing[0]}
+        <br />
+        {t.closing[1]}
       </p>
       <div className={heartRow}>
         <LeafHeart />
